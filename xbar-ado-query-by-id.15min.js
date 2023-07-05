@@ -1,32 +1,34 @@
 #!/usr/local/bin/node
 
-//  <xbar.title>ADO Assigned To Me</xbar.title>
+//  <xbar.title>ADO Query By ID</xbar.title>
 //  <xbar.version>v0.1</xbar.version>
 //  <xbar.author>Marcus Markiewicz</xbar.author>
 //  <xbar.author.github>supermem613</xbar.author.github>
-//  <xbar.desc>Clickable list of ADO bugs assigned to me.</xbar.desc>
+//  <xbar.desc>Clickable list of work items from a given query.</xbar.desc>
 //  <xbar.dependencies>nodejs</xbar.dependencies>
 
 //  <xbar.var>string(USERNAME=""): Azure DevOps username string.</xbar.var>
 //  <xbar.var>string(PAT=""): Azure DevOps user PAT string.</xbar.var>
 //  <xbar.var>string(ORGANIZATION=""): Azure DevOps organization string.</xbar.var>
+//  <xbar.var>string(QUERYID=""): Azure DevOps query ID. Navigate to your favorite query in the browser and copy the GUID from the address.</xbar.var>
 
 // To make it easy to debug, create a shell file with the following content:
 //
-// PAT="your pat" USERNAME="foo@example.com" ORGANIZATION="your_org" node ./xbar-ado-assigned-to-me.15min.js
+// PAT="your pat" USERNAME="foo@example.com" QUERYID="<yourqueryid>" ORGANIZATION="your_org" node ./xbar-ado-query-by-id.15min.js
 //
 // Then run it from the command line.
 
 const username = process.env.USERNAME;
 const pat = process.env.PAT;
 const organization = process.env.ORGANIZATION;
+const queryId = process.env.QUERYID;
 
 main();
 
 async function main() {
 
-    var ids = await queryAssignedToBugs();
-    console.log(ids.length + '🐛');
+    var ids = await querySpecificQueryById(queryId);
+    console.log('🔎' + ids.length);
     console.log('---');
 
     if (ids.length > 0) {
@@ -87,15 +89,9 @@ async function queryWorkItemsFromIds(ids) {
     return data;
 }
 
-async function queryAssignedToBugs() {
-    const requestUrl = `https://dev.azure.com/${organization}/_apis/wit/wiql?api-version=5.1`;
-    const jsonBody = JSON.stringify(
-        {
-            "query":"SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] = 'Bug' AND [State] IN ('Active', 'New') and [Assigned To] = @me order by [System.ChangedDate] desc",
-        });
-
-    var result = await postRequest(requestUrl, jsonBody);
-
+async function querySpecificQueryById(id) {
+    const requestUrl = `https://dev.azure.com/${organization}/_apis/wit/wiql/${queryId}?api-version=5.1`;
+    var result = await getRequest(requestUrl);
     var ids = [];
     var data = JSON.parse(result);
     data.workItems.forEach(element => {
@@ -141,6 +137,42 @@ async function postRequest(requestUrl, jsonBody) {
         if (jsonBody) {
             req.write(jsonBody);
         }
+
+        req.end();
+    });
+}
+
+async function getRequest(requestUrl) {
+    const url = require('url');
+    const parsedUrl = url.parse(requestUrl);
+
+    const options = {
+        'method': 'GET',
+        'host': parsedUrl.host,
+        'path': parsedUrl.path,
+        'headers': {
+            'Authorization': `Basic ${Buffer.from(`${username}:${pat}`).toString('base64')}`,
+            'Accept': 'application/json'
+        }
+    };
+
+    return new Promise((resolve, reject) => {
+        var req = require('https').request(options, function(res) {
+            if (res.statusCode < 200 || res.statusCode >= 300) {
+                return reject(new Error("StatusCode: " + res.statusCode)); 
+            }
+
+            let responseData = '';
+            res.on('data', chunk => { responseData += chunk });
+            res.on('end', () => {
+                try {
+                    resolve(responseData);
+                } catch (error) {
+                    reject(error.message);
+                }});
+            });
+
+        req.on('error', error => { reject(error); });
 
         req.end();
     });
