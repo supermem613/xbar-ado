@@ -10,7 +10,7 @@
 //  <xbar.var>string(USERNAME=""): Azure DevOps username string.</xbar.var>
 //  <xbar.var>string(PAT=""): Azure DevOps user PAT string.</xbar.var>
 //  <xbar.var>string(ORGANIZATION=""): Azure DevOps organization string.</xbar.var>
-//  <xbar.var>string(QUERYID=""): Azure DevOps query ID.</xbar.var>
+//  <xbar.var>string(QUERYID=""): Azure DevOps query ID. Navigate to your favorite query in the browser and copy the GUID from the address.</xbar.var>
 
 // To make it easy to debug, create a shell file with the following content:
 //

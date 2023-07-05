@@ -8,7 +8,8 @@ The theme for these plug-ins are around Azure DevOps (ADO). My personal workflow
 ## Plug-ins Available
 
 * __xbar-ado-assigned-to-me.15min.js__. This plug-in shows the number of active and new bugs assigned to @me in the menu bar. When you hit the drop down, you get a clickable list of the bugs, sorted descending from changed date. Note that it is using a custom field - remove it if it doesn't apply to you.
-* Coming Soon: Specific Queries.
+* __xbar-ado-query-by-id.15min.js__. This plug-in shows the number of bugs for the given query in the menu bar. When you hit the drop down, you get a clickable list of the bugs, sorted descending from changed date. To get the query ID for your query, just navigate in ADO to it and look at the address bar. It'll be the GUID at the end of the address.
+
 
 ## Deploy.sh
 
