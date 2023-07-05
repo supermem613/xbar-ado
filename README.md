@@ -10,6 +10,10 @@ The theme for these plug-ins are around Azure DevOps (ADO). My personal workflow
 * __xbar-ado-assigned-to-me.15min.js__. This plug-in shows the number of active and new bugs assigned to @me in the menu bar. When you hit the drop down, you get a clickable list of the bugs, sorted descending from changed date. Note that it is using a custom field - remove it if it doesn't apply to you.
 * Coming Soon: Specific Queries.
 
+## Deploy.sh
+
+This is a simple script that copies the plug-ins from the place you cloned this repo to the right location that xbar looks for it. Totally optional.
+
 ## Reporting issues
 
 GitHub issues are the way to go.
