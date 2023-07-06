@@ -54,6 +54,8 @@ async function main() {
             // IMPORTANT: This is a custom ADO field. If you don't have it, you can remove this if statement.
             if (entry[0].fields["Office.Common.SubStatus"] == "Local Fixed") {
                 value += ` | color=green`;
+            } else if (entry[0].fields["Office.Common.SubStatus"] == "In Progress") {
+                value += ` | color=orange`;
             }
 
             console.log(value);
